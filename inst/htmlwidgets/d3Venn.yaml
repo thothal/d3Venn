@@ -1,7 +1,7 @@
 dependencies:
   - name: d3
-    version: 6.2.0
-    src: htmlwidgets/lib/d3-6.2.0
+    version: 5.15.0
+    src: htmlwidgets/lib/d3-5.15.0
     script:
       - d3.min.js
   - name: venn.js
