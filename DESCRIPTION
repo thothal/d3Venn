@@ -1,0 +1,10 @@
+Package: d3Venn
+Type: Package
+Title: Venn.js Widget 
+Version: 0.1.0
+Author: Thorn Thaler <thorn.thaler@thothal.com>
+Maintainer: Thorn Thaler <thorn.thaler@thothal.com>
+Description: Create Venn diagrams with the Venn.js D3 plugin for standalone and shiny.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
