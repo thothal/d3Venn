@@ -70,6 +70,29 @@ d3Venn <- function(sets,
       sets <- sets[, names(sets)[!NOK]]
    }
 
+   card <- vapply(sets$sets, length, integer(1))
+
+   NOK <- duplicated(sets$sets)
+   if (any(NOK)) {
+      msg <- sprintf(ngettext(sum(NOK),
+                              "set %s is not unique - will be dropped",
+                              "sets %s are not unique - will be dropped"),
+                              paste(
+                                 sQuote(
+                                 sapply(sets$sets[NOK],
+                                        function(.) paste0("(",
+                                                          paste(., collapse = ", "),
+                                                          ")"))),
+                                 collapse = ", "))
+      warning(msg, domain = NULL)
+      sets <- sets[!NOK, ]
+   }
+
+
+   intersections <- sets$sets[card > 1]
+
+
+
    sets <- do.call(function(...) Map(function(...) {
       res <- list(...)
       res$sets <- as.list(res$sets)
