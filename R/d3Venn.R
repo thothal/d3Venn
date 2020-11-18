@@ -41,14 +41,14 @@ d3Venn <- function(sets,
    ## `sets` will most likely include list columns with list elements, so use
    ## data.frame(sets = I(list(1, 2, list(1, 2))))
 
-   data <- do.call(function(...) Map(function(...) {
+   sets <- do.call(function(...) Map(function(...) {
       res <- list(...)
       res$sets <- as.list(res$sets)
       res
    }, ...), sets)
    htmlwidgets::createWidget(
       name = "d3Venn",
-      data,
+      list(data = sets),
       width  = width,
       height = height
    )
@@ -73,6 +73,8 @@ d3Venn <- function(sets,
 #'
 #' @examples
 #' if (requireNamespace("shiny", quietly = TRUE)) {
+#'    library(shiny)
+#'
 #'    ui <- fluidPage(
 #'       sliderInput("a", "Set A:", 10, 100, 10, 10),
 #'       sliderInput("b", "Set B:", 10, 100, 10, 10),
@@ -81,7 +83,7 @@ d3Venn <- function(sets,
 #'    )
 #'
 #'    server <- function(input, output) {
-#'       output$venn <- renderD3VennOutout({
+#'       output$venn <- renderD3Venn({
 #'          n_A <- req(input$a)
 #'          n_B <- req(input$b)
 #'          n_AB <- round(req(input$ovl) / 100 * min(n_A, n_B))

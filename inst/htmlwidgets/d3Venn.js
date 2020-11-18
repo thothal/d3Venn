@@ -12,6 +12,7 @@ HTMLWidgets.widget({
     return {
       renderValue: function(x) {
          console.log(x);
+         console.log(el);
          d3.select(el).datum(x.data).call(chart);
       },
 

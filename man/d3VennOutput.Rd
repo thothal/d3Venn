@@ -32,6 +32,8 @@ RMD documents
 }
 \examples{
 if (requireNamespace("shiny", quietly = TRUE)) {
+   library(shiny)
+
    ui <- fluidPage(
       sliderInput("a", "Set A:", 10, 100, 10, 10),
       sliderInput("b", "Set B:", 10, 100, 10, 10),
@@ -40,7 +42,7 @@ if (requireNamespace("shiny", quietly = TRUE)) {
    )
 
    server <- function(input, output) {
-      output$venn <- renderD3VennOutout({
+      output$venn <- renderD3VennOutput({
          n_A <- req(input$a)
          n_B <- req(input$b)
          n_AB <- round(req(input$ovl) / 100 * min(n_A, n_B))

@@ -28,7 +28,7 @@ must contain a list. To create \code{list} columns you can use \code{\link[base:
 \section{JavaScript Libraries}{
 
 \itemize{
-\item \url{https://github.com/benfred/venn.js/}
+\item \url{https://github.com/upsetjs/venn.js}
 \item \url{https://d3js.org/}
 }
 }
