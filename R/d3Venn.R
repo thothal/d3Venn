@@ -42,5 +42,67 @@ d3Venn <- function(sets,
    ## data.frame(sets = I(list(1, 2, list(1, 2))))
 
    data <- do.call(function(...) Map(list,...), sets)
+   htmlwidgets::createWidget(
+      name = "d3Venn",
+      data,
+      width  = width,
+      height = height
+   )
+}
 
+
+#' Shiny bindings for d3Venn
+#'
+#' Output and render functions for using d3Venn within Shiny applications and interactive
+#' RMD documents
+#'
+#' @param outputId string, output variable to read the d3Venn diagram from
+#' @param width, height Must be a valid CSS unit (like \code{'100\%'},
+#'        \code{'400px'}, \code{'auto'}) or a number, which will be coerced to a
+#'         string and have \code{'px'} appended.
+#' @param expr expression, which creates the d3Venn object.
+#' @param env environment in which to evaluate \code{expr}.
+#' @param quoted boolean, is \code{expr} a quoted expression (with \code{quote()})? This
+#'   is useful if you want to save an expression in a variable.
+#' @return
+#' @export
+#'
+#' @examples
+#' if (requireNamespace("shiny", quietly = TRUE)) {
+#'    ui <- fluidPage(
+#'       sliderInput("a", "Set A:", 10, 100, 10, 10),
+#'       sliderInput("b", "Set B:", 10, 100, 10, 10),
+#'       sliderInput("ovl", "Overlap:", 0, 100, 10, 10, post = "%"),
+#'       d3VennOutput("venn")
+#'    )
+#'
+#'    server <- function(input, output) {
+#'       output$venn <- renderD3VennOutout({
+#'          n_A <- req(input$a)
+#'          n_B <- req(input$b)
+#'          n_AB <- round(req(input$ovl) / 100 * min(n_A, n_B))
+#'          if (n_AB > 0) {
+#'             dat <- data.frame(sets = I(list("A", "B", list("A", "B"))),
+#'                               sizes = c(n_A, n_B, n_AB))
+#'          } else {
+#'             dat <- data.frame(sets = c("A", "B"),
+#'                               sizes = c(n_A, n_B))
+#'          }
+#'          d3Venn(dat)
+#'       })
+#'    }
+#'
+#'    shinyApp(ui, server)
+#' }
+d3VennOutput <- function(outputId, width = "100%", height = "400px") {
+   htmlwidgets::shinyWidgetOutput(outputId, "d3Venn", width, height, package = "d3Venn")
+}
+
+#' @rdname d3VennOutput
+#' @export
+renderD3Venn <- function(expr, env = parent.frame(), quoted = FALSE) {
+   if (!quoted) {
+      expr <- substitute(expr)
+   } # force quoted
+   htmlwidgets::shinyRenderWidget(expr, d3VennOutput, env, quoted = TRUE)
 }
