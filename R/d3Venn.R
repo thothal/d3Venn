@@ -61,9 +61,9 @@ d3Venn <- function(sets,
 #' RMD documents
 #'
 #' @param outputId string, output variable to read the d3Venn diagram from
-#' @param width, height Must be a valid CSS unit (like \code{'100\%'},
-#'        \code{'400px'}, \code{'auto'}) or a number, which will be coerced to a
-#'         string and have \code{'px'} appended.
+#' @param width,height Must be a valid CSS unit (like \code{\dQuote{100\%}},
+#'        \code{\dQuote{400px}}, \code{\dQuote{auto}}) or a number, which will be coerced to a
+#'         string and have \code{\dQuote{px}} appended.
 #' @param expr expression, which creates the d3Venn object.
 #' @param env environment in which to evaluate \code{expr}.
 #' @param quoted boolean, is \code{expr} a quoted expression (with \code{quote()})? This
@@ -72,14 +72,23 @@ d3Venn <- function(sets,
 #' @export
 #'
 #' @examples
-#' if (requireNamespace("shiny", quietly = TRUE)) {
+#' if (requireNamespace("shiny", quietly = TRUE) && interactive()) {
 #'    library(shiny)
 #'
+#'    options(device.ask.default = FALSE)
+#'
 #'    ui <- fluidPage(
-#'       sliderInput("a", "Set A:", 10, 100, 10, 10),
-#'       sliderInput("b", "Set B:", 10, 100, 10, 10),
-#'       sliderInput("ovl", "Overlap:", 0, 100, 10, 10, post = "%"),
-#'       d3VennOutput("venn")
+#'       titlePanel("Venn Diagram"),
+#'       sidebarLayout(
+#'          sidebarPanel(
+#'             sliderInput("a", "Set A:", 10, 100, 10, 10),
+#'             sliderInput("b", "Set B:", 10, 100, 10, 10),
+#'             sliderInput("ovl", "Overlap:", 0, 100, 10, 10, post = "%")
+#'          ),
+#'          mainPanel(
+#'             d3VennOutput("venn")
+#'          )
+#'       )
 #'    )
 #'
 #'    server <- function(input, output) {
@@ -89,10 +98,10 @@ d3Venn <- function(sets,
 #'          n_AB <- round(req(input$ovl) / 100 * min(n_A, n_B))
 #'          if (n_AB > 0) {
 #'             dat <- data.frame(sets = I(list("A", "B", list("A", "B"))),
-#'                               sizes = c(n_A, n_B, n_AB))
+#'                               size = c(n_A, n_B, n_AB))
 #'          } else {
 #'             dat <- data.frame(sets = c("A", "B"),
-#'                               sizes = c(n_A, n_B))
+#'                               size = c(n_A, n_B))
 #'          }
 #'          d3Venn(dat)
 #'       })

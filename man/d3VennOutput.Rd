@@ -12,9 +12,9 @@ renderD3Venn(expr, env = parent.frame(), quoted = FALSE)
 \arguments{
 \item{outputId}{string, output variable to read the d3Venn diagram from}
 
-\item{width, }{height Must be a valid CSS unit (like \code{'100\%'},
-\code{'400px'}, \code{'auto'}) or a number, which will be coerced to a
-string and have \code{'px'} appended.}
+\item{width, height}{Must be a valid CSS unit (like \code{\dQuote{100\%}},
+\code{\dQuote{400px}}, \code{\dQuote{auto}}) or a number, which will be coerced to a
+string and have \code{\dQuote{px}} appended.}
 
 \item{expr}{expression, which creates the d3Venn object.}
 
@@ -31,27 +31,36 @@ Output and render functions for using d3Venn within Shiny applications and inter
 RMD documents
 }
 \examples{
-if (requireNamespace("shiny", quietly = TRUE)) {
+if (requireNamespace("shiny", quietly = TRUE) && interactive()) {
    library(shiny)
 
+   options(device.ask.default = FALSE)
+
    ui <- fluidPage(
-      sliderInput("a", "Set A:", 10, 100, 10, 10),
-      sliderInput("b", "Set B:", 10, 100, 10, 10),
-      sliderInput("ovl", "Overlap:", 0, 100, 10, 10, post = "\%"),
-      d3VennOutput("venn")
+      titlePanel("Venn Diagram"),
+      sidebarLayout(
+         sidebarPanel(
+            sliderInput("a", "Set A:", 10, 100, 10, 10),
+            sliderInput("b", "Set B:", 10, 100, 10, 10),
+            sliderInput("ovl", "Overlap:", 0, 100, 10, 10, post = "\%")
+         ),
+         mainPanel(
+            d3VennOutput("venn")
+         )
+      )
    )
 
    server <- function(input, output) {
-      output$venn <- renderD3VennOutput({
+      output$venn <- renderD3Venn({
          n_A <- req(input$a)
          n_B <- req(input$b)
          n_AB <- round(req(input$ovl) / 100 * min(n_A, n_B))
          if (n_AB > 0) {
             dat <- data.frame(sets = I(list("A", "B", list("A", "B"))),
-                              sizes = c(n_A, n_B, n_AB))
+                              size = c(n_A, n_B, n_AB))
          } else {
             dat <- data.frame(sets = c("A", "B"),
-                              sizes = c(n_A, n_B))
+                              size = c(n_A, n_B))
          }
          d3Venn(dat)
       })
