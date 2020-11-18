@@ -37,9 +37,38 @@
 d3Venn <- function(sets,
                    width = NULL, height = NULL) {
    ## in this first version we expect an input to be a data.frame with
-   ## column `sets` and `size`and optional `label`
+   ## column `sets` and `size` and optional `label`
    ## `sets` will most likely include list columns with list elements, so use
    ## data.frame(sets = I(list(1, 2, list(1, 2))))
+
+   required_names <- c("sets", "size")
+   optional_names <- c("label")
+
+   if (!is.data.frame(sets)) {
+      msg <- gettextf(paste(sQuote("sets"), "must be a data.frame"))
+      stop(msg, domain = NULL)
+   }
+
+   NOK <- !required_names %in% names(sets)
+   if (any(NOK)) {
+      msg <- sprintf(ngettext(sum(NOK),
+                              "required field %s could not be found",
+                              "required fields %s could not be found"),
+                     paste(sQuote(required_names[NOK]),
+                           collapse = ", "))
+      stop(msg, domain = NULL)
+   }
+
+   NOK <- !names(sets) %in% c(required_names, optional_names)
+   if (any(NOK)) {
+      msg <- sprintf(ngettext(sum(NOK),
+                              "unknown field %s - will be dropped",
+                              "unknown fields %s - will be dropped"),
+                     paste(sQuote(names(sets)[NOK]),
+                           collapse = ", "))
+      warning(msg, domain = NULL)
+      sets <- sets[, names(sets)[!NOK]]
+   }
 
    sets <- do.call(function(...) Map(function(...) {
       res <- list(...)
