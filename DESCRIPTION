@@ -8,3 +8,5 @@ Description: Create Venn diagrams with the Venn.js D3 plugin for standalone and 
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
