@@ -23,7 +23,7 @@ Draw a Venn diagram given a data frame with the sizes and names of the sets.
 }
 \details{
 To pass the size (and or label) of the intersections, the corresponding \code{sets} element
-must contain a list. To create \code{list} columns you can use \code{\link[=base:I]{base:I()}}. See Examples.
+must contain a list. To create \code{list} columns you can use \code{\link[base:AsIs]{base::I()}}. See Examples.
 }
 \section{JavaScript Libraries}{
 
@@ -41,13 +41,13 @@ d3Venn(data.frame(sets = c("A", "B"), size = c(20, 20)))
 d3Venn(data.frame(sets = c("A", "B"), size = c(10, 20), label = c("Set 1", "Set 2")))
 
 # Venn diagram with 2 overlapping sets
-d3Venn(data.frame(sets = I(list("A", "B", list("A", "B")))
+d3Venn(data.frame(sets = I(list("A", "B", list("A", "B"))),
                   size = c(10, 10, 2)))
 
 # Venn diagram where B is a subset of A
-d3Venn(data.frame(sets = I(list("A", "B", list("A", "B")))
+d3Venn(data.frame(sets = I(list("A", "B", list("A", "B"))),
                   size = c(20, 10, 10)))
 }
 \seealso{
-\link[htmlwidgets:createWidget]{htmlwidgets::createWidget}
+\code{\link[htmlwidgets:createWidget]{htmlwidgets::createWidget()}}
 }
