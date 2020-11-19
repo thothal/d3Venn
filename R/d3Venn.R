@@ -10,6 +10,11 @@
 #'        Intersections are represented by a list of set names.
 #' @param width integer, width of the htmlwidget.
 #' @param height integer, height of the htmlwidget.
+#' @param fill_colors,text_color character, vector of colors for filling the circles and
+#'                               the text respectively. Must be interpretable by css (see
+#'                               [htmltools::parseCssColors()] for allowed formats).
+#' @param center_text boolean, should the circles' texts be centered horizontally and
+#'                    vertically?
 #'
 #' @section JavaScript Libraries:
 #' * <https://github.com/upsetjs/venn.js>
@@ -33,8 +38,18 @@
 #' # Venn diagram where B is a subset of A
 #' d3Venn(data.frame(sets = I(list("A", "B", list("A", "B"))),
 #'                   size = c(20, 10, 10)))
+#'
+#' # Venn diagram with differnt colors and centered text
+#' d3Venn(data.frame(sets = I(list("A", "B", list("A", "B"))),
+#'                   size = c(20, 20, 10)),
+#'        c("cornflowerblue", "hsl(300, 100%, 70%)"),
+#'        "#FFA500",
+#'        TRUE)
 
 d3Venn <- function(sets,
+                   fill_colors = NULL,
+                   text_color  = NULL,
+                   center_text = FALSE,
                    width = NULL, height = NULL) {
    ## in this first version we expect an input to be a data.frame with
    ## column `sets` and `size` and optional `label`
@@ -45,7 +60,7 @@ d3Venn <- function(sets,
 
    sanity_check <- .check_validity(sets)
 
-   ## sanity checks, if "just" a warning is indicated fix the input
+   ## sanity check
    if (!sanity_check$result) {
       if (sanity_check$severity == "error") {
          stop(sanity_check$msg, domain = NULL)
@@ -67,7 +82,10 @@ d3Venn <- function(sets,
    }, ...), sets)
    htmlwidgets::createWidget(
       name = "d3Venn",
-      list(data = sets),
+      list(data = sets,
+           opts = list(colourScheme          = htmltools::parseCssColors(fill_colors),
+                       textFill              = htmltools::parseCssColors(text_color),
+                       symmetricalTextCentre = center_text)),
       width  = width,
       height = height
    )
