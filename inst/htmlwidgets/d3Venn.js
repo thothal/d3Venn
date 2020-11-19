@@ -9,13 +9,12 @@ HTMLWidgets.widget({
 
     return {
       renderValue: function(x) {
-        var chart = venn.VennDiagram(x.opts).height(height).width(width);
+        var chart = venn.VennDiagram(x.opts).height(height).width(width).useViewBox(true);
         d3.select(el).datum(x.data).call(chart);
         d3.select(el)
           .attr("style", `max-height: ${height}px; max-width: ${width}px`)
           .select("svg")
-          .attr("preserveAspectRatio", "xMinYMin meet")
-          .attr("viewBox", `0 0 ${width} ${height}`);
+          .attr("preserveAspectRatio", "xMinYMin meet");
       },
 
       resize: function(width, height) {
