@@ -37,9 +37,28 @@
 d3Venn <- function(sets,
                    width = NULL, height = NULL) {
    ## in this first version we expect an input to be a data.frame with
-   ## column `sets` and `size`and optional `label`
+   ## column `sets` and `size` and optional `label`
    ## `sets` will most likely include list columns with list elements, so use
    ## data.frame(sets = I(list(1, 2, list(1, 2))))
+
+   ## sort all interactions to make sure we detect duplicates
+
+   sanity_check <- .check_validity(sets)
+
+   ## sanity checks, if "just" a warning is indicated fix the input
+   if (!sanity_check$result) {
+      if (sanity_check$severity == "error") {
+         stop(sanity_check$msg, domain = NULL)
+      } else if (sanity_check$severity == "warning") {
+         ## use loop in case there are more warnings
+         for(msg in sanity_check$msg) {
+            warning(msg, domain = NULL)
+         }
+      }
+   }
+
+   ## set sets to canonical version
+   sets <- sanity_check$fixed
 
    sets <- do.call(function(...) Map(function(...) {
       res <- list(...)
@@ -61,14 +80,14 @@ d3Venn <- function(sets,
 #' RMD documents
 #'
 #' @param outputId string, output variable to read the d3Venn diagram from
-#' @param width,height Must be a valid CSS unit (like \code{\dQuote{100\%}},
-#'        \code{\dQuote{400px}}, \code{\dQuote{auto}}) or a number, which will be coerced to a
-#'         string and have \code{\dQuote{px}} appended.
+#' @param width,height Must be a valid CSS unit (like \dQuote{\code{100\%}},
+#'        \dQuote{\code{400px}}, \dQuote{\code{auto}}) or a number, which will be coerced to a
+#'         string and have \dQuote{\code{px}} appended.
 #' @param expr expression, which creates the d3Venn object.
 #' @param env environment in which to evaluate \code{expr}.
 #' @param quoted boolean, is \code{expr} a quoted expression (with \code{quote()})? This
 #'   is useful if you want to save an expression in a variable.
-#' @return
+#' @return An output element for use in UI.
 #' @export
 #'
 #' @examples
