@@ -41,33 +41,16 @@ d3Venn <- function(sets,
    ## `sets` will most likely include list columns with list elements, so use
    ## data.frame(sets = I(list(1, 2, list(1, 2))))
 
-   required_names <- c("sets", "size")
-   optional_names <- c("label")
+   sanity_check <- .check_validity(Sets)
 
-   if (!is.data.frame(sets)) {
-      msg <- gettextf(paste(sQuote("sets"), "must be a data.frame"))
-      stop(msg, domain = NULL)
-   }
-
-   NOK <- !required_names %in% names(sets)
-   if (any(NOK)) {
-      msg <- sprintf(ngettext(sum(NOK),
-                              "required field %s could not be found",
-                              "required fields %s could not be found"),
-                     paste(sQuote(required_names[NOK]),
-                           collapse = ", "))
-      stop(msg, domain = NULL)
-   }
-
-   NOK <- !names(sets) %in% c(required_names, optional_names)
-   if (any(NOK)) {
-      msg <- sprintf(ngettext(sum(NOK),
-                              "unknown field %s - will be dropped",
-                              "unknown fields %s - will be dropped"),
-                     paste(sQuote(names(sets)[NOK]),
-                           collapse = ", "))
-      warning(msg, domain = NULL)
-      sets <- sets[, names(sets)[!NOK]]
+   ## sanity checks, if "just" a warning is indicated fix the input
+   if (!sanity.check$result) {
+      if (sanity_check$severity == "error") {
+         stop(sanity_check$msg, domain = NULL)
+      } else if (sanity_check$severity == "warning") {
+         warning(sanity_check$severity, domain = NULL)
+         sets <- sanity_check$fixed
+      }
    }
 
    sets <- do.call(function(...) Map(function(...) {
