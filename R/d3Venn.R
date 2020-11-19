@@ -41,40 +41,24 @@ d3Venn <- function(sets,
    ## `sets` will most likely include list columns with list elements, so use
    ## data.frame(sets = I(list(1, 2, list(1, 2))))
 
-   sanity_check <- .check_validity(Sets)
+   ## sort all interactions to make sure we detect duplicates
+
+   sanity_check <- .check_validity(sets)
 
    ## sanity checks, if "just" a warning is indicated fix the input
-   if (!sanity.check$result) {
+   if (!sanity_check$result) {
       if (sanity_check$severity == "error") {
          stop(sanity_check$msg, domain = NULL)
       } else if (sanity_check$severity == "warning") {
-         warning(sanity_check$severity, domain = NULL)
-         sets <- sanity_check$fixed
+         ## use loop in case there are more warnings
+         for(msg in sanity_check$msg) {
+            warning(msg, domain = NULL)
+         }
       }
    }
 
-   card <- vapply(sets$sets, length, integer(1))
-
-   NOK <- duplicated(sets$sets)
-   if (any(NOK)) {
-      msg <- sprintf(ngettext(sum(NOK),
-                              "set %s is not unique - will be dropped",
-                              "sets %s are not unique - will be dropped"),
-                              paste(
-                                 sQuote(
-                                 sapply(sets$sets[NOK],
-                                        function(.) paste0("(",
-                                                          paste(., collapse = ", "),
-                                                          ")"))),
-                                 collapse = ", "))
-      warning(msg, domain = NULL)
-      sets <- sets[!NOK, ]
-   }
-
-
-   intersections <- sets$sets[card > 1]
-
-
+   ## set sets to canonical version
+   sets <- sanity_check$fixed
 
    sets <- do.call(function(...) Map(function(...) {
       res <- list(...)
