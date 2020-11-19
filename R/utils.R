@@ -2,6 +2,25 @@
 #'
 #' The sanity checks for d3Venn are outsourced to this function for cleaner code.
 #'
+#' @section Note:
+#' Not all logical errors will be covered here for simplicity. For instance missing lower
+#' order intersections and or size restrictions on lower order intersections are not
+#' checked. Rational behind this is that we want to make sure that there is at least a
+#' plot, even if it is not as intended. We add some more tests than strictly necessary
+#' for this goal becasue they were rather easy to implement.
+#' The rest is left to the user to investigate further. A close look into the JS console
+#' reveals if there were erros during the rendering.
+#'
+#' The following issues are checked:
+#' \itemize{
+#' \item{Wrong input}{sets is not a \code{data.frame} or misses some columns}
+#' \item{Unknown fields}{fields not known to Venn.js are supplied}
+#' \item{Duplicated entries}{rows are repeated}
+#' \item{Duplicate elements in intersections}{elements are repeated}
+#' \item{Missing main sets}{intersections contain entries for sets which are not
+#' specified}
+#' \item{Cardinality is too big}{intersection size exceeds main set size}
+#' }
 #' @param sets object, will be checked if it fits the requirments of d3Venn
 #'
 #' @return A list with the follwing elements:
@@ -140,6 +159,29 @@
       sets <- sets[!NOK, ]
    }
 
+   ## check that intersection set sizes are not bigger than main set sizes
+   main_sets_sizes <- stats::setNames(sets$size[card == 1L],
+                                      main_sets)
+   set_size_limit <- vapply(sets$sets, function(set)
+      min(main_sets_sizes[unlist(set)]), numeric(1L))
+   NOK <- sets$size > set_size_limit
+   if (any(NOK)) {
+      ret$result <- FALSE
+      msg <- sprintf(ngettext(sum(NOK),
+                              "cardinality of set %s is too big - will be reduced",
+                              "cardinality of sets %s is too big - will be reduced"),
+                     paste(
+                        sQuote(
+                           vapply(sets$sets[NOK],
+                                  function(.) paste0("(",
+                                                     paste(., collapse = ", "),
+                                                     ")"),
+                                  character(1L))),
+                        collapse = ", "))
+      ret$msg <- c(ret$msg, msg)
+      ret$severity <- "warning"
+      sets$size[NOK] <- set_size_limit[NOK]
+   }
 
    ret$fixed <- sets
    ret

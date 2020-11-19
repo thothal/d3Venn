@@ -12,9 +12,9 @@ renderD3Venn(expr, env = parent.frame(), quoted = FALSE)
 \arguments{
 \item{outputId}{string, output variable to read the d3Venn diagram from}
 
-\item{width, height}{Must be a valid CSS unit (like \code{\dQuote{100\%}},
-\code{\dQuote{400px}}, \code{\dQuote{auto}}) or a number, which will be coerced to a
-string and have \code{\dQuote{px}} appended.}
+\item{width, height}{Must be a valid CSS unit (like \dQuote{\code{100\%}},
+\dQuote{\code{400px}}, \dQuote{\code{auto}}) or a number, which will be coerced to a
+string and have \dQuote{\code{px}} appended.}
 
 \item{expr}{expression, which creates the d3Venn object.}
 
@@ -24,7 +24,7 @@ string and have \code{\dQuote{px}} appended.}
 is useful if you want to save an expression in a variable.}
 }
 \value{
-
+An output element for use in UI.
 }
 \description{
 Output and render functions for using d3Venn within Shiny applications and interactive
