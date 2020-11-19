@@ -6,7 +6,8 @@ Author: Thorn Thaler <thorn.thaler@thothal.com>
 Maintainer: Thorn Thaler <thorn.thaler@thothal.com>
 Description: Create Venn diagrams with the Venn.js D3 plugin for standalone and shiny.
 Imports:
-   htmlwidgets
+    htmlwidgets,
+    htmltools
 Suggests:
     shiny,
     testthat
