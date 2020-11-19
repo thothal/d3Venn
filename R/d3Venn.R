@@ -80,14 +80,14 @@ d3Venn <- function(sets,
 #' RMD documents
 #'
 #' @param outputId string, output variable to read the d3Venn diagram from
-#' @param width,height Must be a valid CSS unit (like \code{\dQuote{100\%}},
-#'        \code{\dQuote{400px}}, \code{\dQuote{auto}}) or a number, which will be coerced to a
-#'         string and have \code{\dQuote{px}} appended.
+#' @param width,height Must be a valid CSS unit (like \dQuote{\code{100\%}},
+#'        \dQuote{\code{400px}}, \dQuote{\code{auto}}) or a number, which will be coerced to a
+#'         string and have \dQuote{\code{px}} appended.
 #' @param expr expression, which creates the d3Venn object.
 #' @param env environment in which to evaluate \code{expr}.
 #' @param quoted boolean, is \code{expr} a quoted expression (with \code{quote()})? This
 #'   is useful if you want to save an expression in a variable.
-#' @return
+#' @return An output element for use in UI.
 #' @export
 #'
 #' @examples
