@@ -37,17 +37,24 @@ test_that("d3Venn() warns if duplicated fields are present", {
    sets <- data.frame(sets = c("A", "A"), size = 1:2)
    expect_warning(d3Venn(sets),
                   warning_msg_rex)
-   ## catch duplciated interactions
-   sets <- data.frame(sets = I(list("A", list("A", "B"), list("A", "B"))),
-                     size = 1:3)
+   ## catch duplicated interactions
+   sets <- data.frame(sets = I(list("A", "B", list("A", "B"), list("A", "B"))),
+                     size = 1:4)
    expect_warning(d3Venn(sets),
                   warning_msg_rex)
    ## should work also if the interactions are sorted differently
-   sets <- data.frame(sets = I(list("A", list("A", "B"), list("B", "A"))),
-                     size = 1:3)
+   sets <- data.frame(sets = I(list("A", "B", list("A", "B"), list("B", "A"))),
+                     size = 1:4)
    expect_warning(d3Venn(sets),
                   warning_msg_rex)
 
+})
+
+test_that("d3Venn() warns if elements in intersections do not appear in main sets", {
+   warning_msg_rex <- "element\\(s\\) in sets? .* do not appear as main sets - will be reduced"
+   sets <- data.frame(sets = I(list("A", list("C", "D"))), size = 1:2)
+   expect_warning(d3Venn(sets),
+                  warning_msg_rex)
 })
 
 

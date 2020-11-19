@@ -39,10 +39,10 @@
    if (any(NOK)) {
       ret$result <- FALSE
       ret$msg <- sprintf(ngettext(sum(NOK),
-                              "required field %s could not be found",
-                              "required fields %s could not be found"),
-                     paste(sQuote(required_names[NOK]),
-                           collapse = ", "))
+                                  "required field %s could not be found",
+                                  "required fields %s could not be found"),
+                         paste(sQuote(required_names[NOK]),
+                               collapse = ", "))
       ret$severity <- "error"
       return(ret)
    }
@@ -52,26 +52,25 @@
    if (any(NOK)) {
       ret$result <- FALSE
       ret$msg <- sprintf(ngettext(sum(NOK),
-                              "unknown field %s - will be dropped",
-                              "unknown fields %s - will be dropped"),
-                     paste(sQuote(names(sets)[NOK]),
-                           collapse = ", "))
+                                  "unknown field %s - will be dropped",
+                                  "unknown fields %s - will be dropped"),
+                         paste(sQuote(names(sets)[NOK]),
+                               collapse = ", "))
       ret$severity <- "warning"
       sets <- sets[, names(sets)[!NOK]]
    }
 
    ## sort all sets such that later we can check duplicates easily
-   sets$sets <- lapply(sets$sets, function(elem) {
-      if (is.list(elem)) {
-         as.list(sort(unlist(elem)))
+   sets$sets <- lapply(sets$sets, function(set) {
+      if (is.list(set)) {
+         as.list(sort(unlist(set)))
       } else {
-         sort(elem)
+         sort(set)
       }
    })
 
    ## check that intersections are unique
-
-   NOK <- sapply(sets$sets, function(set) length(set) != length(unique(set)))
+   NOK <- vapply(sets$sets, function(set) length(set) != length(unique(set)), logical(1L))
    if (any(NOK)) {
       ret$result <- FALSE
       msg <- sprintf(ngettext(sum(NOK),
@@ -79,14 +78,46 @@
                               "sets %s contain duplicated entries - will be reduced"),
                      paste(
                         sQuote(
-                           sapply(sets$sets[NOK],
+                           vapply(sets$sets[NOK],
                                   function(.) paste0("(",
                                                      paste(., collapse = ", "),
-                                                     ")"))),
+                                                     ")"),
+                                  character(1L))),
                         collapse = ", "))
       ret$msg <- c(ret$msg, msg)
       ret$severity <- "warning"
       sets$sets[NOK] <- lapply(sets$sets[NOK], unique)
+   }
+
+   ## check that all intersection sets are based on main sets
+   card <- vapply(sets$sets, length, integer(1L))
+   main_sets <- unlist(sets$sets[card == 1L])
+   NOK <- vapply(sets$sets, function(set) !all(unlist(set) %in% main_sets), logical(1L))
+   if (any(NOK)) {
+      ret$result <- FALSE
+      msg <- sprintf(
+         ngettext(sum(NOK),
+                  "element(s) in set %s do not appear as main sets - will be reduced",
+                  "element(s) in sets %s do not appear as main sets - will be reduced"),
+         paste(
+            sQuote(
+               vapply(sets$sets[NOK],
+                      function(.) paste0("(",
+                                         paste(., collapse = ", "),
+                                         ")"),
+                      character(1L))),
+            collapse = ", "))
+      ret$msg <- c(ret$msg, msg)
+      ret$severity <- "warning"
+      sets$sets[NOK] <- lapply(sets$sets[NOK], function(set) {
+         if (is.list(set)) {
+            as.list(intersect(set, main_sets))
+         } else {
+            intersect(set, main_sets)
+         }
+      })
+      sets <- sets[vapply(sets$sets, function(set) !is.null(set) & length(set) != 0,
+                          logical(1L)), ]
    }
 
    ## check that there are no duplicated sets
@@ -98,15 +129,17 @@
                               "sets %s are not unique - will be dropped"),
                      paste(
                         sQuote(
-                           sapply(sets$sets[NOK],
+                           vapply(sets$sets[NOK],
                                   function(.) paste0("(",
                                                      paste(., collapse = ", "),
-                                                     ")"))),
+                                                     ")"),
+                                  character(1L))),
                         collapse = ", "))
       ret$msg <- c(ret$msg, msg)
       ret$severity <- "warning"
       sets <- sets[!NOK, ]
    }
+
 
    ret$fixed <- sets
    ret
