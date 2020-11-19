@@ -5,24 +5,25 @@ HTMLWidgets.widget({
   type: "output",
 
   factory: function(el, width, height) {
-
-    // create our d3 venn object
-    var chart = venn.VennDiagram();
+    var aspect = width / height;
 
     return {
       renderValue: function(x) {
-         console.log(x);
-         console.log(el);
-         d3.select(el).datum(x.data).call(chart);
+        var chart = venn.VennDiagram(x.opts).height(height).width(width);
+        d3.select(el).datum(x.data).call(chart);
+        d3.select(el)
+          .attr("style", `max-height: ${height}px; max-width: ${width}px`)
+          .select("svg")
+          .attr("preserveAspectRatio", "xMinYMin meet")
+          .attr("viewBox", `0 0 ${width} ${height}`);
       },
 
       resize: function(width, height) {
-      },
-
-      // Make the sigma object available as a property on the widget
-      // instance we're returning from factory(). (maybe not really needed
-      // as all the modifications go through the d3 framework
-      chart: chart
+        d3.select(el)
+          .select("svg")
+          .attr("width", width)
+          .attr("height", Math.round(width / aspect));
+      }
     };
   }
 });
