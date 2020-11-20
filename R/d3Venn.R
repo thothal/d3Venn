@@ -80,12 +80,17 @@ d3Venn <- function(sets,
       res$sets <- as.list(res$sets)
       res
    }, ...), sets)
+   opts <- list(symmetricalTextCentre = center_text)
+   if (!is.null(fill_colors)) {
+      opts$colourScheme <- htmltools::parseCssColors(fill_colors)
+   }
+   if (!is.null(text_color)) {
+      opts$textFill <- htmltools::parseCssColors(text_color)
+   }
    htmlwidgets::createWidget(
       name = "d3Venn",
       list(data = sets,
-           opts = list(colourScheme          = htmltools::parseCssColors(fill_colors),
-                       textFill              = htmltools::parseCssColors(text_color),
-                       symmetricalTextCentre = center_text)),
+           opts = opts),
       width  = width,
       height = height
    )
