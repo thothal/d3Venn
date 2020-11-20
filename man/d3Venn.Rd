@@ -4,12 +4,26 @@
 \alias{d3Venn}
 \title{Create a d3 Venn diagram}
 \usage{
-d3Venn(sets, width = NULL, height = NULL)
+d3Venn(
+  sets,
+  fill_colors = NULL,
+  text_color = NULL,
+  center_text = FALSE,
+  width = NULL,
+  height = NULL
+)
 }
 \arguments{
 \item{sets}{data.frame, each row correspond to one part in the Venn diagram. Must
 contain columns \code{sets} and \code{size} and may contain a column \code{label}.
 Intersections are represented by a list of set names.}
+
+\item{fill_colors, text_color}{character, vector of colors for filling the circles and
+the text respectively. Must be interpretable by css (see
+\code{\link[htmltools:parseCssColors]{htmltools::parseCssColors()}} for allowed formats).}
+
+\item{center_text}{boolean, should the circles' texts be centered horizontally and
+vertically?}
 
 \item{width}{integer, width of the htmlwidget.}
 
@@ -47,6 +61,13 @@ d3Venn(data.frame(sets = I(list("A", "B", list("A", "B"))),
 # Venn diagram where B is a subset of A
 d3Venn(data.frame(sets = I(list("A", "B", list("A", "B"))),
                   size = c(20, 10, 10)))
+
+# Venn diagram with differnt colors and centered text
+d3Venn(data.frame(sets = I(list("A", "B", list("A", "B"))),
+                  size = c(20, 20, 10)),
+       c("cornflowerblue", "hsl(300, 100\%, 70\%)"),
+       "#FFA500",
+       TRUE)
 }
 \seealso{
 \code{\link[htmlwidgets:createWidget]{htmlwidgets::createWidget()}}
