@@ -23,10 +23,24 @@ remotes::install_github("thothal/d3Venn")
 
 ## Basic Usage
 
+
 ```r
 d3Venn(data.frame(sets  = I(list("A", "B", list("A", "B"))),
                   size  = c(10, 10, 2),
                   label = c("Circles", "Diagrams", "Venn Diagrams")))
 ```
 ![](man/figures/simple_venn_2.png)
+
+```r
+d3Venn(data.frame(sets = I(list("A", "B", "C", 
+                                list("A", "B"), list("A", "C"), list("B", "C"),
+                                list("A", "B", "C"))),
+                  size = c(20, 20, 20, 5, 5, 5, 2.5),
+                  label = c("Orphan", "Super Powers", "Cape",
+                            "Spiderman", "Batman", "Wonderwoman",
+                            "Superman")),
+       c("#E41A1C", "#377EB8", "#4DAF4A"))
+```
+![](man/figures/colored_venn_3.png)
+
 
